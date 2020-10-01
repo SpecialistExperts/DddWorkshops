@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using DddWorkshops.Common.Guard;
 using DddWorkshops.Common.ModelFramework;
 
@@ -27,10 +28,14 @@ namespace DddWorkshops.Model.Meeting.Entities.Material
                     $"{nameof(url)} cannot be null, empty or whitespace!",
                     nameof(url));
 
+            Guard.With<ArgumentOutOfRangeException>()
+                .Against(!Enum.GetValues(typeof(MaterialType)).Cast<MaterialType>().Contains(materialType),
+                    $"{nameof(materialType)} has to be a defined value of {nameof(MaterialType)} enumeration!",
+                    nameof(materialType));
+
+
             return new Material(name, url, materialType);
         }
-
-
 
         public string Name { get; private set; }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using DddWorkshops.Common;
 using DddWorkshops.Model.Meeting.Entities.Material;
+using DddWorkshops.Model.Meeting.Exceptions;
 using Xunit;
 
 namespace DddWorkshops.Model.Tests.Meeting
@@ -69,14 +70,83 @@ namespace DddWorkshops.Model.Tests.Meeting
             Assert.Contains(testMeeting.AttachedMaterials, material => material.Name == materialName);
         }
 
-        [Theory]
-        [InlineData("", "fakeUrl")]
-        [InlineData("testName", "")]
-        public void Meeting_OnAttachingMaterials_ThrowsExceptionWhenEitherUrlOrNameIsInvalid(string materialName, string url)
+        [Fact]
+        public void Meeting_OnRemovingMaterials_CanBeRemoved()
         {
-            // TODO: implement this
+            //Arrange
+            const string materialName = "materialName";
+            testMeeting.AttachMaterial(materialName, "https://url.pl", MaterialType.Recording);
+
+            //Act
+            testMeeting.RemoveMaterial(materialName);
+
+            //Assert
+            Assert.DoesNotContain(testMeeting.AttachedMaterials, material => material.Name == materialName);
         }
 
+
+        [Theory]
+        [InlineData("", "fakeUrl", MaterialType.CodeSample)]
+        [InlineData("testName", "", MaterialType.Notes)]
+        [InlineData("materialName", "fakeUrl", (MaterialType) 5)]
+        public void Meeting_OnAttachingMaterials_ThrowsExceptionWhenEitherUrlOrNameIsInvalid(
+            string materialName,
+            string url,
+            MaterialType materialType) =>
+            Assert.ThrowsAny<ArgumentException>(
+                () =>
+                    testMeeting.AttachMaterial(materialName, url, materialType));
+
+        [Fact]
+        public void Meeting_OnAddingAgenda_NewAgendaCanBeViewed()
+        {
+            // Arrange
+            const string meetingAgenda = "Here should be some points";
+
+            // Act
+            testMeeting.AddAgenda(meetingAgenda);
+
+            // Assert
+            Assert.Equal(meetingAgenda, testMeeting.ViewAgenda());
+        }
+
+        [Fact]
+        public void Meeting_OnAddingAgenda_ThrowsExceptionIfAgendaIsAlreadyDefined()
+        {
+            // Arrange
+            const string meetingAgenda = "Here should be some points";
+            testMeeting.AddAgenda(meetingAgenda);
+
+            // Act, Assert
+            Assert.Throws<AgendaIsAlreadyDefinedException>(() => testMeeting.AddAgenda(meetingAgenda));
+        }
+
+        [Fact]
+        public void Meeting_OnModifyingAgenda_NewAgendaIsPersisted()
+        {
+            // Arrange
+            const string oldMeetingAgenda = "Old agenda";
+            const string newMeetingAgenda = "New and improved meeting agenda";
+            testMeeting.AddAgenda(oldMeetingAgenda);
+
+            // Act
+            testMeeting.UpdateAgenda(newMeetingAgenda);
+
+            // Assert
+            Assert.Equal(newMeetingAgenda, testMeeting.ViewAgenda());
+        }
+
+        [Fact]
+        public void Meeting_OnModifyingAgenda_ThrowsExceptionIfNoAgendaIsDefined()
+        {
+            // Arrange
+            const string meetingAgenda = "Dummy meeting agenda";
+
+            // Act, Assert
+            Assert.Throws<AgendaNotDefinedException>(() => testMeeting.UpdateAgenda(meetingAgenda));
+        }
+
+        // TODO during workshops: participants & organizers handling
 
         public void Dispose() => DateTimeProvider.ResetImplementations();
     }
