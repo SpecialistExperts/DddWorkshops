@@ -14,6 +14,12 @@ namespace DddWorkshops.Model.Meeting.Entities.Material
             MaterialType = materialType;
         }
 
+        public string Name { get; private set; }
+
+        public string Url { get; private set; }
+
+        public MaterialType MaterialType { get; private set; }
+
         public static Material New(string name, string url, MaterialType materialType)
         {
             Guard.With<ArgumentException>()
@@ -29,7 +35,8 @@ namespace DddWorkshops.Model.Meeting.Entities.Material
                     nameof(url));
 
             Guard.With<ArgumentOutOfRangeException>()
-                .Against(!Enum.GetValues(typeof(MaterialType)).Cast<MaterialType>().Contains(materialType),
+                .Against(
+                    !Enum.GetValues(typeof(MaterialType)).Cast<MaterialType>().Contains(materialType),
                     $"{nameof(materialType)} has to be a defined value of {nameof(MaterialType)} enumeration!",
                     nameof(materialType));
 
@@ -37,10 +44,6 @@ namespace DddWorkshops.Model.Meeting.Entities.Material
             return new Material(name, url, materialType);
         }
 
-        public string Name { get; private set; }
-
-        public string Url { get; private set; }
-
-        public MaterialType MaterialType { get; private set; }
+        public void MarkAsRemoved() => IsDeleted = true;
     }
 }

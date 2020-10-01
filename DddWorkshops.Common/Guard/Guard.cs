@@ -17,12 +17,7 @@ namespace DddWorkshops.Common.Guard
         /// <typeparam name="TException">Type of exception to be thrown upon assertion failure.</typeparam>
         private class GuardContext<TException> : IGuardContext<TException> where TException : Exception
         {
-            /// <summary>
-            ///     Verifies assertion.
-            /// </summary>
-            /// <param name="expression">Boolean expression to be verified.</param>
-            /// <param name="message">Optional exception message.</param>
-            /// <remarks>If <paramref name="expression" />is true, assertion fails.</remarks>
+            /// <inheritdoc />
             public void Against(bool expression, string? message = null)
             {
                 if (expression)
@@ -31,13 +26,7 @@ namespace DddWorkshops.Common.Guard
                 }
             }
 
-
-            /// <summary>
-            ///     Verifies assertion.
-            /// </summary>
-            /// <param name="expression">Boolean expression to be verified.</param>
-            /// <param name="arguments">Pass arguments to exception constructor.</param>
-            /// <remarks>If <paramref name="expression" />is true, assertion fails.</remarks>
+            /// <inheritdoc />
             public void Against(bool expression, params object[] arguments)
             {
                 if (expression)

@@ -12,6 +12,12 @@ namespace DddWorkshops.Common.Guard
         /// <param name="message">Optional exception message.</param>
         void Against(bool expression, string? message = null);
 
+        /// <summary>
+        ///     Verifies assertion.
+        /// </summary>
+        /// <param name="expression">Boolean expression to be verified.</param>
+        /// <param name="arguments">Exception constructor arguments.</param>
+        /// <remarks>If <paramref name="expression" />is true, assertion fails.</remarks>
         void Against(bool expression, params object[] arguments);
     }
 }

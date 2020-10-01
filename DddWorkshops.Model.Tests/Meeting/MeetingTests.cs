@@ -19,6 +19,10 @@ namespace DddWorkshops.Model.Tests.Meeting
             DateTimeProvider.SetUtcNowImplementation(() => DateTime.Parse("2020-09-24 17:00:00"));
         }
 
+        // TODO during workshops: participants & organizers handling
+
+        public void Dispose() => DateTimeProvider.ResetImplementations();
+
         [Fact]
         public void Meeting_WhenStartDateOccursEarlierThanEndDate_CanBeScheduled()
         {
@@ -35,9 +39,10 @@ namespace DddWorkshops.Model.Tests.Meeting
 
         [Fact]
         public void Meeting_OnPassingEndDateEarlierThanStartDate_ThrowsException() =>
-            Assert.Throws<ArgumentException>(() => testMeeting.ScheduleOn(
-                DateTimeProvider.UtcNow.AddHours(1),
-                DateTimeProvider.UtcNow)); // Arrange, Act, Assert
+            Assert.Throws<ArgumentException>(
+                () => testMeeting.ScheduleOn(
+                    DateTimeProvider.UtcNow.AddHours(1),
+                    DateTimeProvider.UtcNow)); // Arrange, Act, Assert
 
         [Fact]
         public void Meeting_OnCreation_ShouldBeTitled() => Assert.NotNull(testMeeting.MeetingTitle); // Arrange, Act, Assert
@@ -46,16 +51,12 @@ namespace DddWorkshops.Model.Tests.Meeting
         [InlineData("")]
         [InlineData(" ")]
         public void Meeting_OnCreation_ThrowsExceptionWhenInvalidTitleIsProvided(string meetingTitle) =>
-            Assert.Throws<ArgumentException>(() =>
-                Model.Meeting.Meeting.Create(meetingTitle)); // Arrange, Act, Assert
+            Assert.Throws<ArgumentException>(
+                () => Model.Meeting.Meeting.Create(meetingTitle)); // Arrange, Act, Assert
 
 
         [Fact]
-        public void Meeting_OnCreating_MaterialListIsEmpty()
-        {
-            // Assert
-            Assert.Empty(testMeeting.AttachedMaterials);
-        }
+        public void Meeting_OnCreating_MaterialListIsEmpty() => Assert.Empty(testMeeting.AttachedMaterials); // Assert
 
         [Fact]
         public void Meeting_OnAttachingMaterials_CanBeAttached()
@@ -82,6 +83,15 @@ namespace DddWorkshops.Model.Tests.Meeting
 
             //Assert
             Assert.DoesNotContain(testMeeting.AttachedMaterials, material => material.Name == materialName);
+        }
+
+        [Fact]
+        public void Meeting_OnRemovingMaterials_ThrowsExceptionIfMaterialOfSpecifiedNameWasNotFound()
+        {
+            // Arrange
+            const string materialName = "Test material name";
+
+            Assert.Throws<MaterialDoesNotExistException>(() => testMeeting.RemoveMaterial(materialName));
         }
 
 
@@ -145,9 +155,5 @@ namespace DddWorkshops.Model.Tests.Meeting
             // Act, Assert
             Assert.Throws<AgendaNotDefinedException>(() => testMeeting.UpdateAgenda(meetingAgenda));
         }
-
-        // TODO during workshops: participants & organizers handling
-
-        public void Dispose() => DateTimeProvider.ResetImplementations();
     }
 }

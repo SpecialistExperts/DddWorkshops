@@ -26,20 +26,29 @@ namespace DddWorkshops.Model.Meeting
 
         public string MeetingTitle => Title.ToString();
 
-        internal Title Title { get; }
+        internal Title Title { get; private set;  }
 
         internal Term? MeetingTerm { get; private set; }
 
         internal Agenda? Agenda { get; private set; }
 
+        internal IList<Material> AttachedMaterials { get; private set; }
+
         public void ScheduleOn(DateTime startDate, DateTime endDate) => 
             MeetingTerm = Term.Set(startDate, endDate);
 
-        internal IList<Material> AttachedMaterials { get; private set; }
-
-        public void AttachMaterial(string materialName, string url, MaterialType materialType)
-        {
+        public void AttachMaterial(string materialName, string url, MaterialType materialType) => 
             AttachedMaterials.Add(Material.New(materialName, url, materialType));
+
+        public void RemoveMaterial(string materialName)
+        {
+            Guard.With<MaterialDoesNotExistException>().Against(!MaterialExists(), materialName, this);
+
+            var materialToRemove = AttachedMaterials.First(m => m.Name == materialName);
+            materialToRemove.MarkAsRemoved();
+            AttachedMaterials.Remove(materialToRemove);
+
+            bool MaterialExists() => AttachedMaterials.Any(m => m.Name == materialName);
         }
 
         public void AddAgenda(string meetingAgenda)
@@ -56,15 +65,6 @@ namespace DddWorkshops.Model.Meeting
             Guard.With<AgendaNotDefinedException>().Against(!AgendaIsDefined(), this);
 
             Agenda!.Update(newMeetingAgenda);
-        }
-
-        public void RemoveMaterial(string materialName)
-        {           
-            Guard.With<MaterialDoesNotExistException>().Against(!MaterialExists(), materialName, this);
-            var materialToRemove = AttachedMaterials.First(m => m.Name == materialName);
-            AttachedMaterials.Remove(materialToRemove);
-
-            bool MaterialExists() => AttachedMaterials.Any(m => m.Name == materialName);
         }
 
         private bool AgendaIsDefined() => Agenda != null;

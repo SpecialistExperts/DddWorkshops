@@ -34,8 +34,14 @@ namespace DddWorkshops.Common.ModelFramework
         /// </summary>
         public virtual Guid UiD { get; protected set; }
 
+        /// <summary>
+        ///     Property indicating that an entity should be treated as removed from database.
+        /// </summary>
         protected internal virtual bool IsDeleted { get; set; }
 
+        /// <summary>
+        ///     Version of persisted <see cref="Entity"/>.
+        /// </summary>
         protected internal virtual long Version { get; protected set; }
 
         public static bool operator ==(Entity? first, Entity? second)

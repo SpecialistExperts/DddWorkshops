@@ -13,16 +13,10 @@ namespace DddWorkshops.Model.Meeting.Entities.Agenda
 
         protected internal virtual string AgendaText => agendaText;
 
-        public override string ToString() => agendaText;
+        public static Agenda Create(string meetingAgenda) => new Agenda(meetingAgenda);
 
-        public static Agenda Create(string meetingAgenda)
-        {
-            return new Agenda(meetingAgenda);
-        }
+        public override string ToString() => AgendaText;
 
-        public void Update(string newMeetingAgenda)
-        {
-            agendaText = newMeetingAgenda;
-        }
+        public void Update(string newMeetingAgenda) => agendaText = newMeetingAgenda;
     }
 }
