@@ -76,7 +76,9 @@ namespace DddWorkshops.Model.Tests.Meeting
         {
             //Arrange
             const string materialName = "materialName";
+            const string otherMaterialName = "thisWillBeRetained";
             testMeeting.AttachMaterial(materialName, "https://url.pl", MaterialType.Recording);
+            testMeeting.AttachMaterial(otherMaterialName, "fakeUrl", MaterialType.Presentation);
 
             //Act
             testMeeting.RemoveMaterial(materialName);
@@ -153,7 +155,7 @@ namespace DddWorkshops.Model.Tests.Meeting
             const string meetingAgenda = "Dummy meeting agenda";
 
             // Act, Assert
-            Assert.Throws<AgendaNotDefinedException>(() => testMeeting.UpdateAgenda(meetingAgenda));
+            Assert.Throws<AgendaIsNotDefinedException>(() => testMeeting.UpdateAgenda(meetingAgenda));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using DddWorkshops.Common.Extensions;
 using DddWorkshops.Common.Guard;
 using DddWorkshops.Common.ModelFramework;
 
@@ -36,10 +37,9 @@ namespace DddWorkshops.Model.Meeting.Entities.Material
 
             Guard.With<ArgumentOutOfRangeException>()
                 .Against(
-                    !Enum.GetValues(typeof(MaterialType)).Cast<MaterialType>().Contains(materialType),
+                    !EnumExtensions.GetEnumerationValues<MaterialType>().Contains(materialType),
                     $"{nameof(materialType)} has to be a defined value of {nameof(MaterialType)} enumeration!",
                     nameof(materialType));
-
 
             return new Material(name, url, materialType);
         }

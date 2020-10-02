@@ -62,7 +62,7 @@ namespace DddWorkshops.Model.Meeting
 
         public void UpdateAgenda(string newMeetingAgenda)
         {
-            Guard.With<AgendaNotDefinedException>().Against(!AgendaIsDefined(), this);
+            Guard.With<AgendaIsNotDefinedException>().Against(!AgendaIsDefined(), this);
 
             Agenda!.Update(newMeetingAgenda);
         }

@@ -2,9 +2,9 @@
 
 namespace DddWorkshops.Model.Meeting.Exceptions
 {
-    public class AgendaNotDefinedException : Exception
+    public class AgendaIsNotDefinedException : Exception
     {
-        public AgendaNotDefinedException(Meeting meeting)
+        public AgendaIsNotDefinedException(Meeting meeting)
             : base($"Agenda for meeting {meeting} was not defined!")
         {
         }
